@@ -98,6 +98,8 @@ func GetHKThermostat(nestThermostat *nest.Thermostat) *HKThermostat {
 	info := accessory.Info{
 		Name:         nestThermostat.Name,
 		Manufacturer: "Nest",
+		SerialNumber: nestThermostat.DeviceID,
+		Model:        nestThermostat.SoftwareVersion,
 	}
 
 	thermostat := accessory.NewThermostat(info, float64(nestThermostat.AmbientTemperatureC), 9, 32, float64(0.5))
@@ -137,25 +139,22 @@ func GetHKThermostat(nestThermostat *nest.Thermostat) *HKThermostat {
 	return hkThermostat
 }
 
+func init() {
+
+}
+
 func main() {
 	thermostats = map[string]*HKThermostat{}
 
-	productIdArg := flag.String("product-id", "", "Nest provided product id")
-	productSecretArg := flag.String("product-secret", "", "Nest provided product secret")
-	stateArg := flag.String("state", "", "A value you create, used during OAuth")
-	nestPinArg := flag.String("nest-pin", "", "PIN generated from the Nest site")
-	nestTokenArg := flag.String("nest-token", "", "Authorization token from nest auth.")
-	homekitPinArg := flag.String("homekit-pin", "", "PIN you create to be used to pair Nest with HomeKit")
+	flag.StringVar(&productId, "product-id", "", "Nest provided product id")
+	flag.StringVar(&productSecret, "product-secret", "", "Nest provided product secret")
+	flag.StringVar(&state, "state", "", "A value you create, used during OAuth")
+	flag.StringVar(&nestPin, "nest-pin", "", "PIN generated from the Nest site")
+	flag.StringVar(&nestToken, "nest-token", "", "Authorization token from nest auth.")
+	flag.StringVar(&homekitPin, "homekit-pin", "", "PIN you create to be used to pair Nest with HomeKit")
 	verboseArg := flag.Bool("v", false, "Whether or not log output is displayed")
 
 	flag.Parse()
-
-	productId = *productIdArg
-	productSecret = *productSecretArg
-	state = *stateArg
-	nestPin = *nestPinArg
-	nestToken = *nestTokenArg
-	homekitPin = *homekitPinArg
 
 	if !*verboseArg {
 		log.Info = false
